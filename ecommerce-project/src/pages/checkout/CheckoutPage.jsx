@@ -5,26 +5,27 @@ import './CheckoutPage.css';
 import OrderSummary from './OrderSummary';
 import PaymentSummary from './PaymentSummary';
 
-function CheckoutPage({ cart }) {
+function CheckoutPage({ cart, loadCart }) {
     const [deliveryOptions, setDeliveryOtions] = useState([]);
     const [paymentSummary, setPaymentSummary] = useState(null);
 
     useEffect(() => {
-        
-        
         const getDeliveryOptions = async () => {
             const response = await axios.get('/api/delivery-options?expand=estimatedDeliveryTime');
             setDeliveryOtions(response.data);
         };
 
+        getDeliveryOptions();
+    }, []);
+
+    useEffect(() => {
         const getPaymentSummary = async () => {
             const response = await axios.get('/api/payment-summary');
             setPaymentSummary(response.data);
         };
 
-        getDeliveryOptions();
         getPaymentSummary(); 
-    }, []);
+    }, [cart])
 
     return (
         <>
@@ -37,7 +38,7 @@ function CheckoutPage({ cart }) {
 
                 <div className="checkout-grid">
                     
-                    <OrderSummary deliveryOptions={deliveryOptions} cart={cart} />
+                    <OrderSummary deliveryOptions={deliveryOptions} cart={cart} loadCart={loadCart}/>
 
                     <PaymentSummary paymentSummary={paymentSummary} />
 
